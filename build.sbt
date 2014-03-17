@@ -7,7 +7,7 @@ name := "play-querydsl"
 
 organization := "com.code-troopers.play"
 
-version := "0.1.0"
+version := "0.1.1"
 
 sbtPlugin := true
 

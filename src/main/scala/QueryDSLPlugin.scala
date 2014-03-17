@@ -9,26 +9,34 @@ object QueryDSLPlugin extends Plugin {
   val QueryDSL = config("querydsl").hide
 
   val queryDSLVersion = SettingKey[String]("querydsl-version", "QueryDSL version.")
+  val queryDSLPackage = SettingKey[String]("querydsl-package", "QueryDSL package to scan.")
 
   private def compileModels(
                              classpath: Classpath,
                              compilers: Compiler.Compilers,
                              javaSourceDirectory: File,
-                             classesDirectory: File,
+                             generatedSourcesDirectory: File,
+                             packageToScan : String,
                              streams: TaskStreams
                              ) = {
 
-
-    try {
-      classesDirectory.mkdirs()
-      compilers.javac((javaSourceDirectory ** "*.java").get,
-        classpath.map(_.data),
-        classesDirectory,
-        Seq("-proc:only", "-processor", "com.mysema.query.apt.jpa.JPAAnnotationProcessor", "-s", classesDirectory.getAbsolutePath))(streams.log)
+    val cached = FileFunction.cached(streams.cacheDirectory / "querydsl", FilesInfo.lastModified, FilesInfo.exists) {
+      (in: Set[File]) => {
+        //we don't use input as we need full classpath to scan for annotations
+        try {
+          val outputDirectory: File = generatedSourcesDirectory / "querydsl"
+          outputDirectory.mkdirs()
+          compilers.javac((javaSourceDirectory ** "*.java").get.toSeq,
+            classpath.map(_.data),
+            outputDirectory,
+            Seq("-proc:only", "-processor", "com.mysema.query.apt.jpa.JPAAnnotationProcessor", "-s", outputDirectory.getAbsolutePath))(streams.log)
+        } catch {
+          case c: sbt.compiler.CompileFailed => streams.log.info("Compilation failed to complete, it might be because of cross dependencies")
+        }
+        (generatedSourcesDirectory ** "Q*.java").get.toSet
+      }
     }
-    catch {
-      case c: sbt.compiler.CompileFailed => streams.log.info("Compilation failed to complete, it might be because of cross dependencies")
-    }
+    cached((javaSourceDirectory / packageToScan ** "*.java").get.toSet)
   }
 
   val QueryDSLTemplates = (state: State,
@@ -38,8 +46,9 @@ object QueryDSLPlugin extends Plugin {
                            classesDirectory: File,
                            generatedDir: File,
                            compilers: Compiler.Compilers,
+                           packageToScan : String,
                            streams: TaskStreams) => {
-    compileModels(dependencyClassPath ++ pluginClassPath, compilers, javaSourceDirectory, generatedDir, streams)
+    compileModels(dependencyClassPath ++ pluginClassPath, compilers, javaSourceDirectory, generatedDir, packageToScan, streams)
     (generatedDir ** "Q*.java").get.map(_.getAbsoluteFile)
   }
 
@@ -53,8 +62,8 @@ object QueryDSLPlugin extends Plugin {
         "com.mysema.querydsl" % "querydsl-jpa" % version
       )
     ),
-
-    managedClasspath in QueryDSL <<=(classpathTypes, update) map {
+    queryDSLPackage := "models",
+    managedClasspath in QueryDSL <<= (classpathTypes, update) map {
       (ct, report) =>
         Classpaths.managedJars(QueryDSL, ct, report)
     },
@@ -66,7 +75,9 @@ object QueryDSLPlugin extends Plugin {
       sourceDirectory in Compile,
       classDirectory in Compile,
       sourceManaged in Compile,
-      compilers in Compile, streams
+      compilers in Compile,
+      queryDSLPackage,
+      streams
       ) map QueryDSLTemplates
   )
 }
