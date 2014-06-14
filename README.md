@@ -10,10 +10,20 @@ Installation
 
 Add following to your projects `project/plugins.sbt`
 
-	addSbtPlugin("com.code-troopers.play" % "play-querydsl" % "0.1.0")
+	addSbtPlugin("com.code-troopers.play" % "play-querydsl" % "0.1.1")
 
-In addition you'll need to add settings to your project. On Play 2.2 this is
-done by modifying `build.sbt` and adding settings for the QueryDSLPlugin as
+In addition you'll need to add settings to your project. 
+
+On Play 2.3 this is done by modifying `build.sbt` and adding settings for the QueryDSLPlugin as
+well as adding its dependency scope.
+
+
+    com.typesafe.sbt.SbtNativePackager.projectSettings ++ QueryDSLPlugin.queryDSLSettings
+
+    // Make sure this line is below the `libraryDependencies` line to allow you to easily upgrade QueryDSL
+    lazy val root = (project in file(".")).enablePlugins(PlayJava).configs(QueryDSLPlugin.QueryDSL)
+
+On Play 2.2 this is done by modifying `build.sbt` and adding settings for the QueryDSLPlugin as
 well as adding its dependency scope.
 
 
