@@ -10,20 +10,13 @@ Installation
 
 Add following to your projects `project/plugins.sbt`
 
-	addSbtPlugin("com.code-troopers.play" % "play-querydsl" % "0.1.1")
+	addSbtPlugin("com.code-troopers.play" % "play-querydsl" % "0.1.2")
+	
+In Play >= 2.3 you will be able to benefit from `AutoPlugin` mecanism from SBT, 
+this way you only need to add to your project the `enablePlugins(QueryDSLPlugin)` magic.
 
-In addition you'll need to add settings to your project. 
-
-On Play 2.3 this is done by modifying `build.sbt` and adding settings for the QueryDSLPlugin as
-well as adding its dependency scope.
-
-
-    com.typesafe.sbt.SbtNativePackager.projectSettings ++ QueryDSLPlugin.queryDSLSettings
-
-    // Make sure this line is below the `libraryDependencies` line to allow you to easily upgrade QueryDSL
-    lazy val root = (project in file(".")).enablePlugins(PlayJava).configs(QueryDSLPlugin.QueryDSL)
-
-On Play 2.2 this is done by modifying `build.sbt` and adding settings for the QueryDSLPlugin as
+In addition you'll need to add settings to your project. On Play 2.2 this is
+done by modifying `build.sbt` and adding settings for the QueryDSLPlugin as
 well as adding its dependency scope.
 
 
@@ -51,10 +44,19 @@ By default, the plugin scans for changes for classes in the `models` package (ac
 If you want to customize this to allow scanning in another package, you will have to set the plugin property `QueryDSLPlugin.queryDSLPackage`
 to the correct value in your project settings
 
-    QueryDSLPlugin.queryDSLPackage := "com.codetroopers.app.models"
+    //From Play 2.3 and onward (thanks to autoImport feature)
+    queryDSLPackage := "com/codetroopers/app/models"
+    //OR Up to play 2.2
+    QueryDSLPlugin.queryDSLPackage := "com/codetroopers/app/models"
 
 Versions
 --------
+
+* **0.1.2** [2015-03-28]
+
+    Fixes #1 and #2 by respecting queryDSLPackage settings
+    
+    Added a sample project to show usage
 
 * **0.1.1** [2014-03-17]
 
