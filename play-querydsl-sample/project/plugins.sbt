@@ -17,4 +17,4 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-digest" % "1.0.0")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-mocha" % "1.0.0")
 
-addSbtPlugin("com.code-troopers.play" % "play-querydsl" % "0.1.2")
+addSbtPlugin("com.code-troopers.play" % "play-querydsl" % "0.1.3")

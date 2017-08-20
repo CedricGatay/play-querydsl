@@ -7,7 +7,7 @@ name := "play-querydsl"
 
 organization := "com.code-troopers.play"
 
-version := "0.1.2"
+version := "0.1.3"
 
 sbtPlugin := true
 
@@ -17,8 +17,7 @@ resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/release
 /// Dependencies
 
 libraryDependencies ++= Seq(
-  "com.mysema.querydsl" % "querydsl-apt" % "3.6.2",
-  "org.hibernate.javax.persistence" % "hibernate-jpa-2.0-api" % "1.0.1.Final"
+  "com.querydsl" % "querydsl-apt" % "4.1.4"
 )
 
 pomExtra := (
