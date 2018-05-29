@@ -36,7 +36,7 @@ object QueryDSLPlugin extends AutoPlugin {
           compilers.javac(in.toSeq,
             classpath.map(_.data),
             outputDirectory,
-            Seq("-proc:only", "-processor", "com.mysema.query.apt.jpa.JPAAnnotationProcessor", "-s", outputDirectory.getAbsolutePath))(streams.log)
+            Seq("-proc:only", "-processor", "com.querydsl.apt.jpa.JPAAnnotationProcessor", "-s", outputDirectory.getAbsolutePath))(streams.log)
         } catch {
           case c: sbt.compiler.CompileFailed => streams.log.info("Compilation failed to complete, it might be because of cross dependencies")
         }
@@ -62,13 +62,13 @@ object QueryDSLPlugin extends AutoPlugin {
   import autoImport._
 
   override def projectSettings: Seq[Def.Setting[_]] =  Seq[Def.Setting[_]](
-    queryDSLVersion := "3.6.2",
+    queryDSLVersion := "4.1.4",
     libraryDependencies <++= (queryDSLVersion in QueryDSL)(version =>
       Seq(
         //add querydsl-apt to dependencies in QueryDSL
-        "com.mysema.querydsl" % "querydsl-apt" % version % QueryDSL.name,
+        "com.querydsl" % "querydsl-apt" % version % QueryDSL.name,
         //add querydsl-jpa to dependencies of the project
-        "com.mysema.querydsl" % "querydsl-jpa" % version
+        "com.querydsl" % "querydsl-jpa" % version
       )
     ),
     queryDSLPackage := "models",
