@@ -10,7 +10,7 @@ Installation
 
 Add following to your projects `project/plugins.sbt`
 
-	addSbtPlugin("com.code-troopers.play" % "play-querydsl" % "0.1.2")
+	addSbtPlugin("com.code-troopers.play" % "play-querydsl" % "0.1.3")
 	
 In Play >= 2.3 you will be able to benefit from `AutoPlugin` mecanism from SBT, 
 this way you only need to add to your project the `enablePlugins(QueryDSLPlugin)` magic.
@@ -51,6 +51,13 @@ to the correct value in your project settings
 
 Versions
 --------
+
+* **0.1.3** [2018-05-29]
+
+    Merged PR #9, bump to QueryDSL 4.x
+    
+    Thanks @FrEaKmAn
+
 
 * **0.1.2** [2015-03-28]
 
